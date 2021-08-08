@@ -45,6 +45,11 @@ a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com
 # update search services as well
 
 helm dependency update ./alfresco-content-services/
+
+#validate helm chart
+helm alfresco-content-services/.
+helm install --dry-run --generate-name alfresco-content-services/. --values=community_values.yaml --set externalPort="80" --set externalProtocol="http" --set externalHost="a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com" --set persistence.enabled=true --set persistence.storageClass.enabled=true --set persistence.storageClass.name="nfs-client" >&xx.out
+
 helm upgrade --install acs ./alfresco-content-services \
 --values=community_values.yaml \
 --set externalPort="80" \
@@ -57,6 +62,7 @@ helm upgrade --install acs ./alfresco-content-services \
 --timeout 10m0s \
 --namespace=alfresco
 
+#to get access to the /alfresco and /share end points install the istio gateway virtual services
 kubectl -n alfresco apply -f alfresco-istio-gateway.yaml
 gateway.networking.istio.io/alfresco-istio-gateway created
 virtualservice.networking.istio.io/alfresco-istio-gateway created

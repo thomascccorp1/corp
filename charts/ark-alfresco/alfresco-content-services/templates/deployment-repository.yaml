@@ -1,4 +1,4 @@
-{{- if .Values.share.enabled }}
+{{- if .Values.repository.enabled }}
 # Defines the deployment for the alfresco content repository app
 apiVersion: apps/v1
 kind: Deployment
@@ -213,7 +213,7 @@ spec:
       {{- end }}
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim }}
+          claimName: {{ .Values.persistence.repository.existingClaim }}
       - name: custom-pipeline-config-volume
         configMap:
           optional: true

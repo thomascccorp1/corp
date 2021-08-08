@@ -10,7 +10,7 @@
 # Hence, setting up explicit Container memory and then assigning a percentage of it to the JVM for performance tuning.
 
 repository:
-  enabled: false
+  enabled: true
   edition: Community
   replicaCount: 1
   strategy:
@@ -118,7 +118,7 @@ transformmisc:
 # Define the alfresco-share properties to use in the k8s cluster
 # This is the default presentation layer(UI) of Alfresco Content Services
 share:
-  enabled: false
+  enabled: true
   replicaCount: 1
   image:
     repository: alfresco/alfresco-share
@@ -163,9 +163,9 @@ persistence:
     accessModes:
       - ReadWriteMany
     name: "nfs-client" #Custom storage class name
-  existingClaim: "alfresco-volume-claim"
   repository:
     enabled: true
+    existingClaim: "alfresco-volume-claim"
     config:
       querysetsMountPath: "/usr/local/tomcat/shared/classes/alfresco/extension/querysets/"
       transform:
@@ -175,11 +175,20 @@ persistence:
     data:
       mountPath: "/usr/local/tomcat/alf_data"
       subPath: "alfresco-content-services/repository-data"
+  activemq:
+    existingClaim: "alfresco-volume-claim"
+    mountPath: "/opt/activemq/data"
+    subPath: "alfresco-infrastructure/activemq-data"
   filestore:
-    enabled: true
+    enabled: false
+    existingClaim: "alfresco-volume-claim"
     data:
       mountPath: "/tmp/Alfresco"
       subPath: "alfresco-content-services/filestore-data"
+  search:
+    data:
+      mountPath: "/opt/alfresco-search-services/data"
+      subPath: "alfresco-content-services/solr-data"
 
 activemq:
     enabled: true
@@ -228,9 +237,12 @@ postgresql:
   postgresqlExtendedConf:
     max_connections: 300
     log_min_messages: LOG
+  storageClass: gp2
   persistence:
-    existingClaim: "alfresco-volume-claim"
-    subPath: "alfresco-content-services/database-data"
+    enabled: true
+    #existingClaim: "alfresco-volume-claim"
+    storageClass: gp2
+    #subPath: "alfresco-content-services/database-data"
   resources:
     requests:
       memory: "1500Mi"

@@ -448,11 +448,11 @@ persistence:
     enabled: false
     accessModes:
       - ReadWriteMany
-    # -- Custom storage classs name
+    # -- Custom storage class name
     name: "nfs"
-  existingClaim: "alfresco-volume-claim"
   repository:
     enabled: true
+    existingClaim: "alfresco-volume-claim"
     config:
       querysetsMountPath: "/usr/local/tomcat/shared/classes/alfresco/extension/querysets/"
       transform:
@@ -587,8 +587,8 @@ postgresql:
     max_connections: 300
     log_min_messages: LOG
   persistence:
-    existingClaim: "alfresco-volume-claim"
-    subPath: "alfresco-content-services/database-data"
+    #existingClaim: "alfresco-volume-claim"
+    #subPath: "alfresco-content-services/database-data"
   resources:
     requests:
       memory: "1500Mi"

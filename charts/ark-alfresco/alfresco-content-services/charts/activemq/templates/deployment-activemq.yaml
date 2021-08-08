@@ -62,8 +62,8 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
         volumeMounts:
         - name: data
-          mountPath: {{ .Values.persistence.mountPath }}
-          subPath: {{ .Values.persistence.subPath }}
+          mountPath: {{ .Values.persistence.activemq.mountPath }}
+          subPath: {{ .Values.persistence.activemq.subPath }}
       {{- if .Values.persistence.chownWithDynamicProvisioning }}
       initContainers:
         - name: init-fs
@@ -72,14 +72,14 @@ spec:
           resources:
 {{ toYaml .Values.initContainer.resources | indent 14 }}
           # command to allow repository to write to EFS volume.
-          command: ["sh", "-c", "chown -R 33031:1000 {{ .Values.persistence.mountPath }}"]
+          command: ["sh", "-c", "chown -R 33031:1000 {{ .Values.persistence.activemq.mountPath }}"]
           volumeMounts:
             - name: data
-              mountPath: {{ .Values.persistence.mountPath }}
-              subPath: {{ .Values.persistence.subPath }}
+              mountPath: {{ .Values.persistence.activemq.mountPath }}
+              subPath: {{ .Values.persistence.activemq.subPath }}
       {{- end }}
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim }}
+          claimName: {{ .Values.persistence.activemq.existingClaim }}
 {{- end }}
