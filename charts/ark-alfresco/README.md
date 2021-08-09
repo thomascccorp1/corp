@@ -38,6 +38,7 @@ curl -L https://github.com/istio/istio/releases/download/1.10.3/istio-1.10.3-win
 ## and creates the AWS classic ELB
 
 istioctl install --set profile=demo
+
 helm repo update
 
 # create EFS and ensure a mount target is created in each public subnet (since not using private nodes)
@@ -64,13 +65,13 @@ helm dependency update ./alfresco-content-services/
 
 # validate helm chart
 
-helm lint alfresco-content-services/.
+helm lint .
 
-helm install --dry-run --generate-name alfresco-content-services/. --values=community_values.yaml --set externalPort="80" --set externalProtocol="http" --set externalHost="a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com" --set persistence.enabled=true --set persistence.storageClass.enabled=true --set persistence.storageClass.name="nfs-client"
+helm install --dry-run --generate-name . --values=community_values.yaml --set externalPort="80" --set externalProtocol="http" --set externalHost="a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com" --set persistence.enabled=true --set persistence.storageClass.enabled=true --set persistence.storageClass.name="nfs-client"
 
 # install the helm chart after validation passes
 
-helm upgrade --install acs ./alfresco-content-services \
+helm upgrade --install acs . \
 --values=community_values.yaml \
 --set externalPort="80" \
 --set externalProtocol="http" \
