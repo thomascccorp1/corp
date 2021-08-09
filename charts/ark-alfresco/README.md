@@ -1,3 +1,5 @@
+# install eksctl client version 1.21
+
 # Create the cluster
 
 ./create_cluster.sh
@@ -42,23 +44,28 @@ helm repo update
 
 ./create-efs.sh
 
+# create alfresco namespace and add label for istio injection
+
 kubectl create namespace alfresco
+
 kubectl label namespace alfresco istio-injection=enabled
 
 kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com
+
+result:  a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com
 
 # copied the alfresco helm chart repo locally to disable t-engines, search services in values.yaml and added enabled flag to each deployment template
 
-{{- if .Values.tika.enabled }}
+For example:  {{- if .Values.tika.enabled }}
 
-# download the dependanancy charts like postgress
+# download the dependancy charts like postgress
 
 helm dependency update ./alfresco-content-services/
 
 # validate helm chart
 
 helm lint alfresco-content-services/.
+
 helm install --dry-run --generate-name alfresco-content-services/. --values=community_values.yaml --set externalPort="80" --set externalProtocol="http" --set externalHost="a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com" --set persistence.enabled=true --set persistence.storageClass.enabled=true --set persistence.storageClass.name="nfs-client"
 
 # install the helm chart after validation passes
@@ -82,8 +89,11 @@ kubectl -n alfresco apply -f alfresco-istio-gateway.yaml
 # get some ingress stats
 
 kubectl get svc alfresco-istio-gateway -n alfresco
+
 kubectl get gateway -n alfresco
+
 kubectl get vs -n alfresco
+
 istioctl analyze -n alfresco
 
 # Install all istio addons for istio metrics and tracing:
@@ -115,28 +125,28 @@ EOF
 # CLEAN UP
 ##################################
 
-# Reduce nodes to temporarily save costs
+## Reduce nodes to temporarily save costs
 
 eksctl scale nodegroup --cluster alfresco-eks --name alfresco-linux-nodes --nodes 0
 
-# delete the istio addons
+## delete the istio addons
 
 kubectl delete -n istio-system -f samples/addons
 
-# delete the istio gateway
+## delete the istio gateway
 
 kubectl delete -n alfresco -f alfresco-istio-gateway.yaml
 
-# delete the alfresco namespace
+## delete the alfresco namespace
 
 kubectl delete namespace alfresco
 
-# should delete the istio ingress ELB in AWS
+## should delete the istio ingress ELB in AWS
 
 istioctl x uninstall --purge
 
 kubectl delete namespace istio-system
 
-# Go to the EFS Console, select the file system we created earlier and press the "Delete" button to remove the mount targets and file system.
+## Go to the EFS Console, select the file system we created earlier and press the "Delete" button to remove the mount targets and file system.
 
 eksctl delete cluster --name alfresco-eks
