@@ -16,8 +16,8 @@ repository:
   strategy:
     type: Recreate
   image:
-    repository: 300674751221.dkr.ecr.us-east-1.amazonaws.com/acs/ark_alfresco
-    tag: "7.0.0"
+    repository: 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_alfresco
+    tag: "latest"
     pullPolicy: Always
     internalPort: 8080
     hazelcastPort: 5701
@@ -121,8 +121,8 @@ share:
   enabled: true
   replicaCount: 1
   image:
-    repository: alfresco/alfresco-share
-    tag: "7.0.0"
+    repository: 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_share
+    tag: "latest"
     pullPolicy: IfNotPresent
     internalPort: 8080
   service:

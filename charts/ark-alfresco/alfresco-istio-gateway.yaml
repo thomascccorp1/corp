@@ -12,6 +12,12 @@ spec:
       protocol: HTTP
     hosts:
     - "*"
+  - port:
+      number: 443
+      name: https
+      protocol: HTTP
+    hosts:
+    - "*"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -37,5 +43,13 @@ spec:
     route:
     - destination:
         host: acs-alfresco-cs-share
+        port:
+          number: 80
+  - match:
+    - uri:
+        prefix: /api-explorer
+    route:
+    - destination:
+        host: acs-alfresco-cs-repository
         port:
           number: 80

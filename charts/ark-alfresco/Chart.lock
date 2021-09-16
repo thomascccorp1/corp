@@ -1,0 +1,21 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.9.6
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.9.6
+- name: common
+  repository: https://activiti.github.io/activiti-cloud-helm-charts
+  version: 7.1.0-M12
+- name: activemq
+  repository: ""
+  version: 2.0.0
+- name: alfresco-search
+  repository: ""
+  version: 1.0.4
+- name: alfresco-sync-service
+  repository: ""
+  version: 3.0.8
+digest: sha256:d9e0e67cac75ce8c9b9b675177f3c245327e2069dc09cb6d63b31ef374813f88
+generated: "2021-09-15T23:48:46.9192426-04:00"

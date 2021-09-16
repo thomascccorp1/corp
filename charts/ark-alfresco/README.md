@@ -19,13 +19,33 @@ eksctl create cluster \
 --ssh-public-key "~/.ssh/armcsbs-public.pub" \
 --managed
 
+# set the region and profile
+
+AWS_PROFILE=ark-cli
+AWS_REGION=ap-south-1
+
+# add the aws sso profile
+
+cat ~/.aws/config
+[profile ark-cli]
+sso_start_url = https://xxx-umbrella.awsapps.com/start
+sso_region = us-east-1
+sso_account_id = xxxx
+sso_role_name = AdministratorAccess
+region = ap-south-1
+output = json
+
 # update local kubeconfig for LENS IDE
 
 aws eks --region us-east-1 update-kubeconfig --name alfresco-eks
 
+aws eks --region ap-south-1 update-kubeconfig --name arkcase-eks
+
 # Make sure to use correct cluster
 
 kubectl config use-context  arn:aws:eks:us-east-1:300674751221:cluster/alfresco-eks
+
+kubectl config use-context  arn:aws:eks:ap-south-1:345280441424:cluster/arkcase-eks
 
 # download istio
 
@@ -54,6 +74,7 @@ kubectl label namespace alfresco istio-injection=enabled
 kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 
 result:  a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com
+result (india): a33a9f10544dd481a9ceba4fac1d7156-1392466058.ap-south-1.elb.amazonaws.com
 
 # copied the alfresco helm chart repo locally to disable t-engines, search services in values.yaml and added enabled flag to each deployment template
 
@@ -75,17 +96,21 @@ helm upgrade --install acs . \
 --values=community_values.yaml \
 --set externalPort="80" \
 --set externalProtocol="http" \
---set externalHost="a057bcf2e007f4be2baf6e85570cd540-1695087874.us-east-1.elb.amazonaws.com" \
+--set externalHost="a33a9f10544dd481a9ceba4fac1d7156-1392466058.ap-south-1.elb.amazonaws.com" \
 --set persistence.enabled=true \
 --set persistence.storageClass.enabled=true \
 --set persistence.storageClass.name="nfs-client" \
 --atomic \
 --timeout 10m0s \
---namespace=alfresco
+--namespace=arkcase
 
 # to get access to the /alfresco and /share end points install the istio gateway virtual services
 
 kubectl -n alfresco apply -f alfresco-istio-gateway.yaml
+
+# secure ingress gateway using a cert
+
+kubectl -n istio-system patch service istio-ingressgateway --patch "$(cat ingress-secure-gateway-patch.yaml)"
 
 # get some ingress stats
 
